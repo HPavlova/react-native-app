@@ -6,14 +6,13 @@ const Stack = createStackNavigator();
 const MainTab = createBottomTabNavigator();
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 
 import RegisterScreen from "./screens/auth/RegisterScreen";
 import LoginScreen from "./screens/auth/LoginScreen";
 import PostsScreen from "./screens/main/PostsScreen";
 import ProfileScreen from "./screens/main/ProfileScreen";
 import CreateScreen from "./screens/main/CreateScreen";
-// import Home from "./screens/Home";
 
 export default function useRoute(isAuth) {
   if (!isAuth) {
@@ -29,11 +28,6 @@ export default function useRoute(isAuth) {
           name="Registration"
           component={RegisterScreen}
         />
-        {/* <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{ title: "Start screen" }}
-          /> */}
       </Stack.Navigator>
     );
   }
@@ -55,26 +49,30 @@ export default function useRoute(isAuth) {
         component={PostsScreen}
       ></MainTab.Screen>
       <MainTab.Screen
-               options={{
-                headerShown: false,
-                tabBarShowLabel: false,
-                tabBarIcon: ({ focused, color, size }) => (
-                    <MaterialCommunityIcons name="face-man-profile" size={size} color={color} />
-                ),
-              }}
-        name="Profile"
-        component={ProfileScreen}
-      ></MainTab.Screen>
-      <MainTab.Screen
-               options={{
-                headerShown: false,
-                tabBarShowLabel: false,
-                tabBarIcon: ({ focused, color, size }) => (
-                    <AntDesign name="pluscircleo" size={size} color={color} />
-                ),
-              }}
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <AntDesign name="pluscircleo" size={40} color={color} />
+          ),
+        }}
         name="Create"
         component={CreateScreen}
+      ></MainTab.Screen>
+      <MainTab.Screen
+        options={{
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused, color, size }) => (
+            <MaterialCommunityIcons
+              name="face-man-profile"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+        name="Profile"
+        component={ProfileScreen}
       ></MainTab.Screen>
     </MainTab.Navigator>
   );
