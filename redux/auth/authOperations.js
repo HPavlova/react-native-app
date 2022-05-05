@@ -5,6 +5,7 @@ import {
 } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import db from "../../firebase/config";
+import { authSlice } from "./authReducer";
 
 const auth = getAuth();
 
@@ -24,7 +25,8 @@ export const authSignUpUser =
   async (dispatch, getState) => {
     try {
       console.log(nickname, email, password);
-      const user = await createUserWithEmailAndPassword(auth, email, password);
+      const {user} = await createUserWithEmailAndPassword(auth, email, password);
+      dispatch(authSlice.actions.updateUserProfile({ userId: user.uid }));
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
