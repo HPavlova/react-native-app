@@ -4,7 +4,10 @@ import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
 import useRoute from "./router";
 import { Provider } from "react-redux";
-import {store} from './redux/store';
+import { store } from "./redux/store";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const auth = getAuth();
 
 const loadApplication = async () => {
   await Font.loadAsync({
@@ -14,7 +17,10 @@ const loadApplication = async () => {
 
 export default function App() {
   const [isReady, setisReady] = useState(false);
-  const routing = useRoute({});
+  const [user, setUser] = useState(null);
+  
+  onAuthStateChanged(auth, (user) => setUser(user));
+  const routing = useRoute(user);
 
   if (!isReady) {
     return (

@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
   Dimensions,
   ImageBackground,
@@ -15,6 +16,8 @@ import {
   Button,
 } from "react-native";
 
+import { authSignUpUser } from "../../redux/auth/authOperations";
+
 const initialState = {
   email: "",
   password: "",
@@ -28,6 +31,7 @@ export default function RegisterScreen({ navigation }) {
   const [dimensions, setdimensions] = useState(
     Dimensions.get("window").width - 20 * 2
   );
+  const dispatch = useDispatch();
   const image = require("../../assets/images/luxfon.com-17592.jpg");
 
   useEffect(() => {
@@ -44,15 +48,15 @@ export default function RegisterScreen({ navigation }) {
     };
   }, []);
 
-  const keyboardHide = () => {
+  const handleSubmit = () => {
     setisShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
+    dispatch(authSignUpUser(state));
     setstate(initialState);
   };
 
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
+    <TouchableWithoutFeedback onPress={handleSubmit}>
       <View style={styles.container}>
         <ImageBackground source={image} style={styles.image}>
           <KeyboardAvoidingView
@@ -107,7 +111,7 @@ export default function RegisterScreen({ navigation }) {
                 />
               </View>
               <View>
-                <TouchableOpacity style={styles.btn} onPress={keyboardHide}>
+                <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
                   <Text style={styles.btnTitle}>SIGN UP</Text>
                 </TouchableOpacity>
               </View>
