@@ -1,35 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
-import * as Location from "expo-location";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+const storage = getStorage();
 
 export default function CreateScreen({ navigation }) {
+  const [hasPermission, setHasPermission] = useState(null);
   const [camera, setCamera] = useState(null);
-  const [photo, setPhoto] = useState();
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [photo, setPhoto] = useState(null);
 
   const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    setHasPermission(status === "granted");
+    if (hasPermission === null) {
+      return <View />;
+    }
+    if (hasPermission === false) {
+      return <Text>No access to camera</Text>;
+    }
 
-    let location = await Location.getCurrentPositionAsync();
-    console.log(location);
-    setPhoto(photo.uri);
+    if (!camera) {
+      return;
+    }
+    const { uri } = await camera.takePictureAsync();
+    setPhoto(uri);
   };
 
   const sendPhoto = () => {
+    uploadPhotoToServer();
     navigation.navigate("DefaultScreen", { photo });
   };
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      console.log(status);
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-    })();
-  }, []);
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+    const data = await ref(storage, `postImage/${uniquePostId}`);
+    await uploadBytes(data, file);
+  };
 
   return (
     <View style={styles.container}>
