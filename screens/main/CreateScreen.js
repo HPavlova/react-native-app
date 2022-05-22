@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const storage = getStorage();
 
 export default function CreateScreen({ navigation }) {
@@ -38,6 +38,12 @@ export default function CreateScreen({ navigation }) {
     const uniquePostId = Date.now().toString();
     const data = await ref(storage, `postImage/${uniquePostId}`);
     await uploadBytes(data, file);
+
+    const processedPhoto = await getDownloadURL(
+      ref(storage, `postImage/${uniquePostId}`)
+    );
+
+    console.log(processedPhoto);
   };
 
   return (
