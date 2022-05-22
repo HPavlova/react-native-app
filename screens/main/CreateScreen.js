@@ -1,13 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { Camera } from "expo-camera";
+import * as Location from "expo-location";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const storage = getStorage();
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
+
+const dbFirestore = getFirestore(db);
 
 export default function CreateScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [camera, setCamera] = useState(null);
+  const [comment, setComment] = useState("");
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const { userId, nickname } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
 
   const takePhoto = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
@@ -27,8 +57,20 @@ export default function CreateScreen({ navigation }) {
   };
 
   const sendPhoto = () => {
-    uploadPhotoToServer();
+    uploadPostToServer();
     navigation.navigate("DefaultScreen", { photo });
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToServer();
+
+    const createPost = await addDoc(collection(dbFirestore, "posts"), {
+      photo,
+      comment,
+      location,
+      userId,
+      nickname,
+    });
   };
 
   const uploadPhotoToServer = async () => {
@@ -43,7 +85,7 @@ export default function CreateScreen({ navigation }) {
       ref(storage, `postImage/${uniquePostId}`)
     );
 
-    console.log(processedPhoto);
+    return processedPhoto;
   };
 
   return (
@@ -61,6 +103,9 @@ export default function CreateScreen({ navigation }) {
           <Text style={styles.snap}>SNAP</Text>
         </TouchableOpacity>
       </Camera>
+      <View style={styles.inputContainer}>
+        <TextInput style={styles.input} onChangeText={setComment} />
+      </View>
       <TouchableOpacity onPress={sendPhoto} style={styles.sendBtn}>
         <Text style={styles.sendlabel}>SEND</Text>
       </TouchableOpacity>
@@ -115,5 +160,12 @@ const styles = StyleSheet.create({
   sendlabel: {
     color: "#20b2aa",
     fontSize: 20,
+  },
+  inputContainer: { marginHorizontal: 10 },
+  input: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#fff",
+    borderBottomColor: "#20b2aa",
   },
 });
