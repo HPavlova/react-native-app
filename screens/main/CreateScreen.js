@@ -58,7 +58,7 @@ export default function CreateScreen({ navigation }) {
 
   const sendPhoto = () => {
     uploadPostToServer();
-    navigation.navigate("DefaultScreen", { photo });
+    navigation.navigate("DefaultScreen");
   };
 
   const uploadPostToServer = async () => {
@@ -67,7 +67,7 @@ export default function CreateScreen({ navigation }) {
     const createPost = await addDoc(collection(dbFirestore, "posts"), {
       photo,
       comment,
-      location,
+      location: location ? location.coords : "",
       userId,
       nickname,
     });
