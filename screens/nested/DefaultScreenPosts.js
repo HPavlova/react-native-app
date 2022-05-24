@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, Image, Button, Text } from "react-native";
-import { getFirestore, collection, doc, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 const dbFirestore = getFirestore(db);
 

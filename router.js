@@ -50,6 +50,8 @@ export default function useRoute(isAuth) {
       ></MainTab.Screen>
       <MainTab.Screen
         options={{
+          headerShown: false,
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused, color, size }) => (
             <AntDesign name="pluscircleo" size={40} color={color} />
           ),
@@ -59,6 +61,8 @@ export default function useRoute(isAuth) {
       ></MainTab.Screen>
       <MainTab.Screen
         options={{
+          headerShown: false,
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused, color, size }) => (
             <AntDesign name="profile" size={size} color={color} />
           ),

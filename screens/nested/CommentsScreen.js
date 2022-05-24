@@ -71,7 +71,6 @@ export default function CommentsScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "flex-end",
   },
   commentContainer:{
     borderWidth: 1,
